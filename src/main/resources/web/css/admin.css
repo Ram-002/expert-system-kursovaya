@@ -1,0 +1,89 @@
+#admin {
+    display: flex;
+}
+
+#admin > div {
+    height: 100%;
+}
+
+#admin-stock {
+    display: flex;
+    flex-direction: column;
+}
+
+#admin-stock-select {
+    flex-grow: 1;
+
+    border-width: 0.1em;
+    border-right-style: solid;
+
+}
+
+#admin-stock-add {
+    padding: 0.3em;
+
+    border-right-style: solid;
+    border-bottom-style: solid;
+    border-width: 0.1em;
+}
+
+#admin-stock-add-title {
+    margin: 0.5em;
+    font-size: 130%;
+    text-align: center;
+    font-weight: bold;
+}
+
+.admin-stock-select {
+    margin: 0.4em;
+    display: flex;
+}
+
+.admin-stock-select > div {
+    flex-grow: 1;
+}
+
+#admin-price {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+#admin-price-add {
+    padding: 0.4em;
+}
+
+#admin-price-add-title-default {
+    text-align: center;
+    font-size: 120%;
+    font-weight: bold;
+    padding: 0.4em;
+}
+
+#admin-price-add-title-name {
+    display: flex;
+}
+#admin-price-add-title-name-name {
+    margin-left: 0.2em;
+    display: flex;
+    font-weight: bold;
+}
+
+#admin-price-display {
+    flex-grow: 1;
+    padding: 0.4em;
+    overflow-y: auto;
+}
+
+.admin-price-display-row {
+    display: flex;
+}
+
+.admin-price-display-date {
+    padding-right: 0.4em;
+}
+
+.admin-price-display-price {
+    padding-right: 0.4em;
+}
+

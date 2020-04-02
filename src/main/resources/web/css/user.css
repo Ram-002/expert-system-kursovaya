@@ -1,0 +1,120 @@
+#user-login {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#user-login-card {
+    display: flex;
+    flex-direction: column;
+}
+
+#user-login-card * {
+    display: block;
+    margin: 0.3em;
+}
+
+#user-login-card button {
+    padding: 0.2em;
+}
+
+#user-console {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+#user-console-portfolio-control-title {
+    margin: 0.3em;
+    text-align: center;
+    font-size: 130%;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+#user-console-portfolio {
+    display: flex;
+    flex-direction: column;
+    border-right-style: solid;
+    border-width: 0.1em;
+}
+
+#user-console-portfolio-control {
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+}
+
+#user-console-portfolio-control > div {
+    display: flex;
+    margin: 0.3em;
+}
+
+#user-console-portfolio-control > button {
+    display: block;
+    margin: 0.3em;
+    padding: 0.2em;
+    text-align: center;
+}
+
+#user-console-portfolio-control > div > div:first-child {
+    width: 13ch;
+}
+
+#user-console-portfolio-display-wrapper {
+    flex-grow: 1;
+    border-top-style: solid;
+    border-width: 0.1em;
+}
+
+#user-console-portfolio-display {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: scroll;
+}
+
+#user-console-calc {
+    flex-grow: 1;
+}
+
+.portfolio-category-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.portfolio-category {
+    border-bottom-style: dashed;
+    border-width: 0.1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.portfolio-category-body {
+    display: flex;
+}
+
+.portfolio-category-body > div {
+    padding: 0.2em;
+}
+
+.portfolio-category-body > div:first-child {
+    padding-right: 0.4em;
+}
+
+#user-console-calc-title {
+    text-align: center;
+    padding: 0.3em;
+    font-weight: bold;
+    font-size: 120%;
+}
+
+#user-console-calc-price-chart-container {
+    max-height: 20em;
+    height: 20em;
+}
+
+#user-console-calc-price-chart {
+    height: 100%;
+}

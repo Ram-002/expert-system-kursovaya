@@ -1,0 +1,152 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <title>Экспертная система по оценке доходности акций</title>
+    <meta name="description" content="Экспертная система, позволяющая оценить доходность акций">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="icon.png">
+
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/user.css">
+
+    <meta name="theme-color" content="#fafafa">
+</head>
+
+<body>
+<!--[if IE]>
+<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="https://browsehappy.com/">upgrade
+    your browser</a> to improve your experience and security.</p>
+<![endif]-->
+
+<div id="body">
+    <div id="nav">
+        <div id="user-toggle">Расчеты</div>
+        <div id="admin-toggle">Администрирование</div>
+        <div id="refresh">
+            <img src="img/refresh-cw-white.svg">
+        </div>
+    </div>
+    <div id="main">
+
+        <div id="user">
+            <div id="user-login">
+                <div id="user-login-card">
+                    <div>Введите имя пользователя</div>
+                    <input id="user-login-input" type="text">
+                    <button id="user-login-btn">Войти</button>
+                </div>
+            </div>
+            <div id="user-console">
+                <div id="user-console-portfolio">
+                    <div id="user-console-portfolio-control-title">Мой портфель</div>
+                    <div id="user-console-portfolio-control">
+                        <div>
+                            <div>Акция:</div>
+                            <select id="user-console-portfolio-control-select"></select>
+                        </div>
+                        <div>
+                            <div>Количество:</div>
+                            <input type="number" min="0" step="1" placeholder="1" autocomplete="off"
+                                   id="user-console-portfolio-control-amount">
+                        </div>
+                        <div>
+                            <div>Дата покупки:</div>
+                            <input type="date" id="user-console-portfolio-control-date">
+                        </div>
+                        <button id="user-console-portfolio-control-add">Добавить</button>
+                    </div>
+
+                    <div id="user-console-portfolio-display-wrapper">
+                        <div id="user-console-portfolio-display">
+                        </div>
+                    </div>
+                </div>
+                <div id="user-console-calc">
+                    <div id="user-console-calc-title">Аналитика</div>
+
+
+                    <div>
+                        <div>Стоимость покупки акций:</div>
+                        <div id="user-console-calc-purchase"></div>
+                    </div>
+
+                    <div id="user-console-calc-price-chart-container">
+                        <div>Стоимость портфеля</div>
+                        <canvas id="user-console-calc-price-chart" width="400" height="400"></canvas>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="admin">
+            <div id="admin-stock">
+                <div id="admin-stock-add">
+                    <div id="admin-stock-add-title">
+                        Добавить акцию
+                    </div>
+                    <div>
+                        <input id="admin-stock-add-name" type="text" placeholder="Имя акции">
+                        <button id="admin-stock-add-btn">Добавить</button>
+                    </div>
+                </div>
+                <div id="admin-stock-select">
+
+                </div>
+            </div>
+
+            <div id="admin-price">
+                <div id="admin-price-add">
+                    <div id="admin-price-add-title-default">Выберите акцию в меню слева</div>
+                    <div id="admin-price-add-title-name">Выбранная акция:
+                        <div id="admin-price-add-title-name-name"></div>
+                    </div>
+                    <div id="admin-price-add-control">
+                        <div>
+                            <div>Дата:</div>
+                            <input id="price-add-date" type="date" value="2020-01-01">
+                        </div>
+                        <div>
+                            <div>Цена:</div>
+                            <input id="price-add-price" type="number" min="0" step="0.01" value="0.00">
+                        </div>
+                        <div>
+                            <div>Дивиденды</div>
+                            <input id="price-add-dividends" type="number" min="0" step="0.01" value="0.00">
+                        </div>
+                        <button id="price-add-btn">Добавить цену</button>
+                    </div>
+                </div>
+                <div id="admin-price-display">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const url = "http://localhost:8080/"
+</script>
+
+
+<script src="js/vendor/jquery-3.4.1.js"></script>
+<script src="js/vendor/decimal.js"></script>
+<script src="js/vendor/Chart.js"></script>
+<script src="js/modules/api.js"></script>
+<script src="js/modules/interface.js"></script>
+<script src="js/modules/admin.js"></script>
+<script src="js/modules/user.js"></script>
+<script src="js/main.js"></script>
+
+
+</body>
+
+</html>
