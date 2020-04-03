@@ -262,27 +262,42 @@ public class Main {
                 result.castAndPut("dividendsByStockByDate", dividendsByStockByDate);
                 txn.getAll("stock").forEach(stockEntity -> {
                     dividendsByStockByDate.castAndPut(stockEntity.getProperty("name"), object());
-                    txn.find("price", "stockname", stockEntity.getProperty("name")).forEach(priceEntity -> {
+                    txn.find("price", "name", stockEntity.getProperty("name")).forEach(priceEntity -> {
                         dividendsByStockByDate.getObject(stockEntity.getProperty("name")).castAndPut(
                                 String.valueOf(priceEntity.getProperty("date")),
                                 priceEntity.getProperty("dividends")
                         );
                     });
                 });
+                dividendsByStockByDate.forEach((jsonString, json) -> interpolate(json.getAsObject(), firstDate, lastDate));
 
                 JsonObject dividendsSumByStockByDate = new JsonObject();
                 result.castAndPut("dividendsSumByStockByDate", dividendsSumByStockByDate);
+                AtomicInteger bigDividendsSum = new AtomicInteger();
+                JsonObject dividendsSum = new JsonObject();
+                result.castAndPut("dividendsSumTotal", dividendsSum);
                 countByStockByDate.forEach((stockName, countHistory) -> {
                     AtomicInteger previousSum = new AtomicInteger();
                     JsonObject sum = new JsonObject();
                     dividendsSumByStockByDate.put(stockName, sum);
                     countHistory.getAsObject().forEach((date, count) -> {
                         if (dividendsByStockByDate.getObject(stockName).containsNumber(date)) {
-                            previousSum.addAndGet(count.getAsNumber().intValue() * dividendsByStockByDate.getObject(stockName).getNumber(date).intValue());
+                            int inc = count.getAsNumber().intValue() * dividendsByStockByDate.getObject(stockName).getNumber(date).intValue();
+                            previousSum.addAndGet(inc);
+                            bigDividendsSum.addAndGet(inc);
                         }
                         sum.castAndPut(date, previousSum);
+
+                        if (!dividendsSum.containsNumber(date)) {
+                            dividendsSum.castAndPut(date, 0);
+                        }
+                        dividendsSum.castAndPut(
+                                date,
+                                dividendsSum.getNumber(date).intValue() + count.getAsNumber().intValue() * dividendsByStockByDate.getObject(stockName).getNumber(date).intValue()
+                        );
                     });
                 });
+                result.castAndPut("dividendsSum", bigDividendsSum.get());
             });
 
             ctx.result(result.toString());

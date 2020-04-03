@@ -103,11 +103,24 @@
     padding-right: 0.4em;
 }
 
+#user-console-calc {
+    padding: 0.5em;
+    overflow: auto;
+}
+
 #user-console-calc-title {
     text-align: center;
     padding: 0.3em;
     font-weight: bold;
-    font-size: 120%;
+    font-size: 130%;
+}
+
+#user-console-calc-purchase-card {
+    display: flex;
+}
+
+#user-console-calc-purchase-card > div:first-child {
+    margin-right: 0.4em;
 }
 
 #user-console-calc-price-chart-container {
@@ -115,6 +128,17 @@
     height: 20em;
 }
 
+#user-console-calc-price-chart-title {
+    font-weight: bold;
+    text-align: center;
+}
+
 #user-console-calc-price-chart {
     height: 100%;
 }
+
+#user-console-calc-dividend-chart-title {
+    font-weight: bold;
+    text-align: center;
+}
+

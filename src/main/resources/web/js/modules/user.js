@@ -74,13 +74,18 @@ function deletePortfolioEntry(stock, date) {
 
 
 let priceChart = null;
+let dividendChart = null;
 
 function updateAnalytics() {
     Portfolio.analytics().then(value => {
         $("#user-console-calc-purchase").text(value.purchase ? value.purchase / 100 : 0);
+        $("#user-console-calc-dividend").text(value.dividendsSum / 100)
 
         if (priceChart != null) {
             priceChart.destroy();
+        }
+        if (dividendChart != null) {
+            dividendChart.destroy();
         }
 
         const portfolioPrice = [];
@@ -91,7 +96,7 @@ function updateAnalytics() {
             portfolioPriceLabels.push(`${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}`);
         });
 
-        const datasetsByStock = [];
+        const datasetsStock = [];
         Object.keys(value.byStockByDate).forEach(stockName => {
             let prices = [];
             Object.values(value.byStockByDate[stockName]).forEach(price => {
@@ -100,7 +105,7 @@ function updateAnalytics() {
             let r = Math.random() * 255;
             let g = Math.random() * 255;
             let b = Math.random() * 255;
-            datasetsByStock.push({
+            datasetsStock.push({
                 label: stockName,
                 backgroundColor: `rgb(${r},${g},${b})`,
                 borderColor: `rgb(${r},${g},${b})`,
@@ -113,7 +118,7 @@ function updateAnalytics() {
 
         let horizontalLineData = new Array(portfolioPriceLabels.length)
 
-        datasetsByStock.push({
+        datasetsStock.push({
             label: 'Стоимость покупки акций',
             backgroundColor: `rgb(226, 0, 57)`,
             borderColor: `rgb(226, 0, 57)`,
@@ -135,7 +140,7 @@ function updateAnalytics() {
                     data: portfolioPrice,
                     fill: false,
                     tension: 0
-                }].concat(datasetsByStock)
+                }].concat(datasetsStock)
             },
             options: {
                 maintainAspectRatio: false,
@@ -150,6 +155,33 @@ function updateAnalytics() {
             }
         });
 
+        let datasetsDividends = [];
+
+        dividendChart = new Chart($("#user-console-calc-dividend-chart")[0].getContext("2d"), {
+            type: "line",
+            data: {
+                labels: portfolioPriceLabels,
+                datasets: [{
+                    label: "Сумма дивидендов",
+                    backgroundColor: "rgb(31,255,122)",
+                    borderColor: "rgb(31,255,122)",
+                    data: Object.values(value.dividendsSumTotal),
+                    fill: false,
+                    tension: 0
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                bezierCurve: false,
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
     })
 }
 
