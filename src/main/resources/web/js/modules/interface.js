@@ -17,3 +17,7 @@ adminPanel.hide();
 
 const refreshButton = $("#refresh");
 
+function prependWithZero(n) {
+    return n < 10 ? "0" + n : n;
+}
+

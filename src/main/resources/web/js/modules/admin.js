@@ -83,7 +83,7 @@ function displayPrices() {
             let date = new Date(price['date'] * 86400000);
             stockPricesPanel.append($(`
                 <div class="admin-price-display-row">
-                    <div class="admin-price-display-date">День ${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}</div>
+                    <div class="admin-price-display-date">День ${prependWithZero(date.getUTCDate())}.${prependWithZero(date.getUTCMonth() + 1)}.${date.getUTCFullYear()}</div>
                     <div class="admin-price-display-price">Цена ${price['price'] / 100}</div>
                     <div class="admin-price-display-price">Дивиденды ${price['dividends'] / 100}</div>
                 </div>

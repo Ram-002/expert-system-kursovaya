@@ -94,6 +94,7 @@ public class Main {
                         priceEntity.addLink("stock", stock);
                     } else {
                         oldPirce.setProperty("price", normalPrice);
+                        oldPirce.setProperty("dividends", normalDividends);
                     }
                 }
             });
@@ -106,7 +107,8 @@ public class Main {
             entityStore.executeInReadonlyTransaction(txn -> {
                 Entity stock = txn.find("stock", "name", name).getFirst();
                 if (stock != null) {
-                    EntityIterable prices = stock.getLinks("price");
+                    EntityIterable prices = stock.getLinks("price")
+                            .intersectSavingOrder(txn.sort("price", "date", true));
                     prices.forEach(entity -> array.add(object(
                             "price", (Integer) entity.getProperty("price"),
                             "date", entity.getProperty("date"),
@@ -212,7 +214,8 @@ public class Main {
                 JsonObject countByStockByDate = new JsonObject();
                 result.castAndPut("countByStockByDate", countByStockByDate);
                 txn.getAll("stock").forEach(stockEntity -> {
-                    JsonObject priceByDate = new JsonObject();
+                    JsonObject countByDate = new JsonObject();
+                    countByStockByDate.castAndPut(stockEntity.getProperty("name"), countByDate);
 
                     AtomicInteger stockCount = new AtomicInteger(0);
                     txn.find("user", "username", userName)
@@ -220,9 +223,8 @@ public class Main {
                             .intersectSavingOrder(txn.sort("user", "date", true))
                             .forEach(portfolioEntity -> {
                                 stockCount.addAndGet((Integer) portfolioEntity.getProperty("amount"));
-                                priceByDate.castAndPut(String.valueOf(portfolioEntity.getProperty("date")), stockCount.get());
+                                countByDate.castAndPut(String.valueOf(portfolioEntity.getProperty("date")), stockCount.get());
                             });
-                    countByStockByDate.castAndPut(stockEntity.getProperty("name"), priceByDate);
                 });
                 countByStockByDate.forEach((jsonString, json) -> interpolate(json.getAsObject(), firstDate, lastDate));
 
@@ -269,35 +271,43 @@ public class Main {
                         );
                     });
                 });
-                dividendsByStockByDate.forEach((jsonString, json) -> interpolate(json.getAsObject(), firstDate, lastDate));
+                dividendsByStockByDate.forEach((jsonString, json) -> fillWithZeroes(json.getAsObject(), firstDate, lastDate));
 
                 JsonObject dividendsSumByStockByDate = new JsonObject();
                 result.castAndPut("dividendsSumByStockByDate", dividendsSumByStockByDate);
-                AtomicInteger bigDividendsSum = new AtomicInteger();
-                JsonObject dividendsSum = new JsonObject();
-                result.castAndPut("dividendsSumTotal", dividendsSum);
                 countByStockByDate.forEach((stockName, countHistory) -> {
                     AtomicInteger previousSum = new AtomicInteger();
                     JsonObject sum = new JsonObject();
                     dividendsSumByStockByDate.put(stockName, sum);
-                    countHistory.getAsObject().forEach((date, count) -> {
-                        if (dividendsByStockByDate.getObject(stockName).containsNumber(date)) {
-                            int inc = count.getAsNumber().intValue() * dividendsByStockByDate.getObject(stockName).getNumber(date).intValue();
-                            previousSum.addAndGet(inc);
-                            bigDividendsSum.addAndGet(inc);
-                        }
-                        sum.castAndPut(date, previousSum);
 
+
+                    ArrayList<Integer> dates = new ArrayList<>(countHistory.getAsObject().keySet().size());
+                    countHistory.getAsObject().keySet().forEach(jsonString -> {
+                        dates.add(Integer.valueOf(jsonString.string));
+                    });
+                    Collections.sort(dates);
+                    dates.forEach(date -> {
+                        previousSum.addAndGet(
+                                countHistory.getAsObject().getNumber(Integer.toString(date)).intValue() *
+                                        dividendsByStockByDate.getObject(stockName).getNumber(Integer.toString(date)).intValue());
+                        sum.castAndPut(Integer.toString(date), previousSum.get());
+                    });
+                });
+
+                JsonObject dividendsSum = new JsonObject();
+                result.castAndPut("dividendsSumTotal", dividendsSum);
+                dividendsSumByStockByDate.forEach((stockName, dividendsHistory) -> {
+                    dividendsHistory.getAsObject().forEach((date, amount) -> {
                         if (!dividendsSum.containsNumber(date)) {
                             dividendsSum.castAndPut(date, 0);
                         }
                         dividendsSum.castAndPut(
                                 date,
-                                dividendsSum.getNumber(date).intValue() + count.getAsNumber().intValue() * dividendsByStockByDate.getObject(stockName).getNumber(date).intValue()
+                                dividendsSum.getNumber(date).intValue() + amount.getAsNumber().intValue()
                         );
                     });
                 });
-                result.castAndPut("dividendsSum", bigDividendsSum.get());
+                result.castAndPut("dividendsSum", dividendsSum.getNumber(String.valueOf(lastDate)).intValue());
             });
 
             ctx.result(result.toString());
@@ -345,7 +355,7 @@ public class Main {
         int last = dates.size() > 0 ? dates.get(dates.size() - 1) : end;
 
         if (first > start) {
-            for (int i = start; i <= first; i++) {
+            for (int i = start; i < first; i++) {
                 object.castAndPut(String.valueOf(i), 0);
             }
         }
@@ -357,6 +367,15 @@ public class Main {
         for (int i = start + 1; i <= end; i++) {
             if (!object.containsKey(String.valueOf(i))) {
                 object.castAndPut(String.valueOf(i), object.get(String.valueOf(i - 1)));
+            }
+        }
+        return object;
+    }
+
+    public static JsonObject fillWithZeroes(JsonObject object, int start, int end) {
+        for (int i = start; i <= end; i++) {
+            if (!object.containsKey(String.valueOf(i))) {
+                object.castAndPut(String.valueOf(i), 0);
             }
         }
         return object;

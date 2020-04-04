@@ -115,6 +115,15 @@
     font-size: 130%;
 }
 
+#user-console-calc-income-card {
+    display: flex;
+}
+
+#user-console-calc-income {
+    margin-left: 0.4em;
+    font-weight: bold;
+}
+
 #user-console-calc-purchase-card {
     display: flex;
 }

@@ -78,8 +78,14 @@ let dividendChart = null;
 
 function updateAnalytics() {
     Portfolio.analytics().then(value => {
+        let lastDate = 0;
+        Object.keys(value.dividendsSumTotal).forEach(date => {
+            lastDate = Number(date) > lastDate ? Number(date) : lastDate;
+        });
+
         $("#user-console-calc-purchase").text(value.purchase ? value.purchase / 100 : 0);
-        $("#user-console-calc-dividend").text(value.dividendsSum / 100)
+        $("#user-console-calc-dividend").text(value.dividendsSum / 100);
+        $("#user-console-calc-income").text(`${(100 * (value.dividendsSum + value.portfolioPriceByDate[lastDate]) / value.purchase - 100).toFixed(2)}%`);
 
         if (priceChart != null) {
             priceChart.destroy();
@@ -93,7 +99,7 @@ function updateAnalytics() {
         Object.keys(value.portfolioPriceByDate).forEach(rawDate => {
             portfolioPrice.push(value.portfolioPriceByDate[rawDate] / 100);
             date = new Date(rawDate * 86400000)
-            portfolioPriceLabels.push(`${date.getUTCDate()}.${date.getUTCMonth() + 1}.${date.getUTCFullYear()}`);
+            portfolioPriceLabels.push(`${prependWithZero(date.getUTCDate())}.${prependWithZero(date.getUTCMonth() + 1)}.${date.getUTCFullYear()}`);
         });
 
         const datasetsStock = [];
@@ -156,6 +162,10 @@ function updateAnalytics() {
         });
 
         let datasetsDividends = [];
+
+        Object.keys(value.dividendsSumTotal).forEach(date => {
+            value.dividendsSumTotal[date] /= 100;
+        });
 
         dividendChart = new Chart($("#user-console-calc-dividend-chart")[0].getContext("2d"), {
             type: "line",
